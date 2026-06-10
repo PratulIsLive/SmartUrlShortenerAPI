@@ -59,11 +59,9 @@ builder.Services.AddScoped<QrCodeService>();
 var app = builder.Build();
 
 // Swagger
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 // Custom Middleware
 app.UseMiddleware<RequestLoggingMiddleware>();
