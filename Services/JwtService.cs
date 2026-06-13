@@ -23,15 +23,15 @@ public class JwtService
             new Claim(ClaimTypes.Name, user.Username)
         };
 
+        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
+            ?? _configuration["Jwt:Key"];
+        
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(
-                _configuration["Jwt:Key"]!
-            ));
-
+            Encoding.UTF8.GetBytes(jwtKey!));
+            
         var credentials = new SigningCredentials(
             key,
-            SecurityAlgorithms.HmacSha256
-        );
+            SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             claims: claims,
