@@ -16,13 +16,39 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // PostgreSQL
+var connectionString =
+    Environment.GetEnvironmentVariable("DB_CONNECTION")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+    Console.WriteLine("================================");
+    Console.WriteLine($"DB_CONNECTION = {connectionString}");
+    Console.WriteLine("================================");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new Exception("Database connection string not found.");
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+        connectionString,
+        npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorCodesToAdd: null);
+        }));
 
 // JWT
-var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtKey =
+    Environment.GetEnvironmentVariable("JWT_KEY")
+    ?? builder.Configuration["Jwt:Key"];
+
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    throw new Exception("JWT key not found.");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -40,7 +66,7 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             IssuerSigningKey =
                 new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(jwtKey!)
+                    Encoding.UTF8.GetBytes(jwtKey)
                 ),
             ValidateIssuer = false,
             ValidateAudience = false,
@@ -61,7 +87,6 @@ var app = builder.Build();
 // Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 // Custom Middleware
 app.UseMiddleware<RequestLoggingMiddleware>();
