@@ -255,7 +255,7 @@ public class UrlController : ControllerBase
 
         var shortUrl =
             $"{Request.Scheme}://{Request.Host}/{shortCode}";
-            
+
         var qrCodeBytes =
             _qrCodeService.GenerateQrCode(shortUrl);
 
@@ -265,29 +265,7 @@ public class UrlController : ControllerBase
             $"{shortCode}-qrcode.png");
     }
 
-    [AllowAnonymous]
-    [HttpGet("{shortCode}")]
-    public IActionResult RedirectToOriginalUrl(string shortCode)
-    {
-        var mapping = _storage.GetByShortCode(shortCode);
-
-        if (mapping == null)
-        {
-            return NotFound("Short URL not found");
-        }
-
-        if (mapping.ExpiryDate.HasValue &&
-            mapping.ExpiryDate.Value < DateTime.UtcNow)
-        {
-            return BadRequest("This short URL has expired");
-        }
-
-        mapping.VisitCount++;
-        mapping.LastAccessedAt = DateTime.UtcNow;
-
-        _storage.Update(mapping);
-
-        return Redirect(mapping.OriginalUrl);
-    }
+        
+    
 
 }
