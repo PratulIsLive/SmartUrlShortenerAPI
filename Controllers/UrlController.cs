@@ -66,13 +66,15 @@ public class UrlController : ControllerBase
 
         _storage.Save(mapping);
 
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+
         return Ok(new
         {
             OriginalUrl = mapping.OriginalUrl,
             ShortCode = mapping.ShortCode,
-            ShortUrl = $"http://localhost:5004/{mapping.ShortCode}",
-            QrCodeUrl = $"http://localhost:5004/api/url/qrcode/{mapping.ShortCode}",
-            QrCodeDownloadUrl = $"http://localhost:5004/api/url/qrcode/{mapping.ShortCode}/download"
+            ShortUrl = $"{baseUrl}/{mapping.ShortCode}",
+            QrCodeUrl = $"{baseUrl}/api/url/qrcode/{mapping.ShortCode}",
+            QrCodeDownloadUrl = $"{baseUrl}/api/url/qrcode/{mapping.ShortCode}/download"
         });
     }
 
@@ -230,7 +232,7 @@ public class UrlController : ControllerBase
         }
 
         var shortUrl =
-            $"http://localhost:5004/{shortCode}";
+            $"{Request.Scheme}://{Request.Host}/{shortCode}";
 
         var qrCodeBytes =
             _qrCodeService.GenerateQrCode(shortUrl);
@@ -252,8 +254,8 @@ public class UrlController : ControllerBase
         }
 
         var shortUrl =
-            $"http://localhost:5004/{shortCode}";
-
+            $"{Request.Scheme}://{Request.Host}/{shortCode}";
+            
         var qrCodeBytes =
             _qrCodeService.GenerateQrCode(shortUrl);
 
