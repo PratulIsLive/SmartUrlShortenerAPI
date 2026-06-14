@@ -73,7 +73,22 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine("AUTH FAILED:");
+            Console.WriteLine(context.Exception.Message);
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("TOKEN VALIDATED SUCCESSFULLY");
+            return Task.CompletedTask;
+        }
+    };
 });
+
 
 // Services
 builder.Services.AddSingleton<ShortCodeGeneratorService>();
