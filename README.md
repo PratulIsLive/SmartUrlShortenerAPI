@@ -126,14 +126,6 @@ Open Swagger:
 http://localhost:5004/swagger
 ```
 
-## Future Improvements
-
-* Unit Testing with xUnit
-* CI/CD using GitHub Actions
-* Bitly-like Frontend
-* Redis Caching
-* Rate Limiting 
-
 ## Author
 
 Pratul Kumar
