@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UrlShortener.API.Data;
-using UrlShortener.API.Services;
 using UrlShortener.API.Middleware;
+using UrlShortener.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +20,9 @@ var connectionString =
     Environment.GetEnvironmentVariable("DB_CONNECTION")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-    Console.WriteLine("================================");
-    Console.WriteLine($"DB_CONNECTION = {connectionString}");
-    Console.WriteLine("================================");
+Console.WriteLine("================================");
+Console.WriteLine($"DB_CONNECTION = {connectionString}");
+Console.WriteLine("================================");
 
 if (string.IsNullOrWhiteSpace(connectionString))
 {
@@ -73,6 +73,7 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
+
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = context =>
@@ -81,6 +82,7 @@ builder.Services.AddAuthentication(options =>
             Console.WriteLine(context.Exception.Message);
             return Task.CompletedTask;
         },
+
         OnTokenValidated = context =>
         {
             Console.WriteLine("TOKEN VALIDATED SUCCESSFULLY");
@@ -88,7 +90,6 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
 
 // Services
 builder.Services.AddSingleton<ShortCodeGeneratorService>();

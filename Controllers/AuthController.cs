@@ -37,7 +37,7 @@ public class AuthController : ControllerBase
 
         _userService.Save(user);
 
-        return Ok(new
+        return Ok(new RegisterResponse
         {
             Message = "User registered successfully"
         });
@@ -65,7 +65,7 @@ public class AuthController : ControllerBase
 
         var token = _jwtService.GenerateToken(user);
 
-        return Ok(new
+        return Ok(new LoginResponse
         {
             Message = "Login successful",
             Token = token

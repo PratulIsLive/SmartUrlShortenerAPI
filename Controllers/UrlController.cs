@@ -16,6 +16,10 @@ public class UrlController : ControllerBase
     private readonly UrlStorageService _storage;
     private readonly QrCodeService _qrCodeService;
 
+    private int CurrentUserId =>
+        int.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
     public UrlController(
         ShortCodeGeneratorService generator,
         UrlStorageService storage,
@@ -27,7 +31,8 @@ public class UrlController : ControllerBase
     }
 
     [HttpPost("shorten")]
-    public IActionResult Shorten(CreateShortUrlRequest request)
+    public IActionResult Shorten(
+        [FromBody] CreateShortUrlRequest request)
     {
         if (!Uri.TryCreate(
                 request.OriginalUrl,
@@ -53,14 +58,11 @@ public class UrlController : ControllerBase
             shortCode = _generator.GenerateCode();
         }
 
-        var userId = int.Parse(
-            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
         var mapping = new UrlMapping
         {
             OriginalUrl = request.OriginalUrl,
             ShortCode = shortCode,
-            UserId = userId,
+            UserId = CurrentUserId,
             ExpiryDate = request.ExpiryDate
         };
 
@@ -86,11 +88,8 @@ public class UrlController : ControllerBase
         int page = 1,
         int pageSize = 5)
     {
-        var userId = int.Parse(
-            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
         var urls = _storage.GetFilteredUrls(
-            userId,
+            CurrentUserId,
             search,
             sortBy,
             sortOrder,
@@ -99,7 +98,7 @@ public class UrlController : ControllerBase
 
         var totalCount =
             _storage.GetFilteredCount(
-                userId,
+                CurrentUserId,
                 search);
 
         return Ok(new
@@ -117,19 +116,16 @@ public class UrlController : ControllerBase
     [HttpGet("dashboard")]
     public IActionResult Dashboard()
     {
-        var userId = int.Parse(
-            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
         var mostVisited =
-            _storage.GetMostVisitedUrl(userId);
+            _storage.GetMostVisitedUrl(CurrentUserId);
 
         var response = new DashboardResponse
         {
-            TotalUrls = _storage.GetTotalUrls(userId),
-            TotalVisits = _storage.GetTotalVisits(userId),
+            TotalUrls = _storage.GetTotalUrls(CurrentUserId),
+            TotalVisits = _storage.GetTotalVisits(CurrentUserId),
             MostVisitedShortCode = mostVisited?.ShortCode,
-            ActiveUrls = _storage.GetActiveUrls(userId),
-            ExpiredUrls = _storage.GetExpiredUrls(userId)
+            ActiveUrls = _storage.GetActiveUrls(CurrentUserId),
+            ExpiredUrls = _storage.GetExpiredUrls(CurrentUserId)
         };
 
         return Ok(response);
@@ -138,12 +134,9 @@ public class UrlController : ControllerBase
     [HttpGet("stats/{shortCode}")]
     public IActionResult GetStats(string shortCode)
     {
-        var userId = int.Parse(
-            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
         var mapping = _storage.GetByShortCodeAndUserId(
             shortCode,
-            userId);
+            CurrentUserId);
 
         if (mapping == null)
         {
@@ -165,14 +158,11 @@ public class UrlController : ControllerBase
     [HttpPut("{shortCode}")]
     public IActionResult Update(
         string shortCode,
-        UpdateUrlRequest request)
+        [FromBody] UpdateUrlRequest request)
     {
-        var userId = int.Parse(
-            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
         var mapping = _storage.GetByShortCodeAndUserId(
             shortCode,
-            userId);
+            CurrentUserId);
 
         if (mapping == null)
         {
@@ -191,7 +181,7 @@ public class UrlController : ControllerBase
 
         _storage.Update(mapping);
 
-        return Ok(new
+        return Ok(new UpdateResponse
         {
             Message = "Short URL updated successfully"
         });
@@ -200,12 +190,9 @@ public class UrlController : ControllerBase
     [HttpDelete("{shortCode}")]
     public IActionResult Delete(string shortCode)
     {
-        var userId = int.Parse(
-            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
         var mapping = _storage.GetByShortCodeAndUserId(
             shortCode,
-            userId);
+            CurrentUserId);
 
         if (mapping == null)
         {
@@ -214,7 +201,7 @@ public class UrlController : ControllerBase
 
         _storage.Delete(mapping);
 
-        return Ok(new
+        return Ok(new DeleteResponse
         {
             Message = "Short URL deleted successfully"
         });
@@ -265,7 +252,14 @@ public class UrlController : ControllerBase
             $"{shortCode}-qrcode.png");
     }
 
-        
-    
-
+    [HttpGet("test")]
+    public IActionResult Test()
+    {
+        return Ok(new
+        {
+            Message = "Authorized successfully",
+            UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            Username = User.FindFirst(ClaimTypes.Name)?.Value
+        });
+    }
 }
