@@ -132,7 +132,7 @@ http://localhost:5004/swagger
 * CI/CD using GitHub Actions
 * Bitly-like Frontend
 * Redis Caching
-* Rate Limiting
+* Rate Limiting 
 
 ## Author
 
