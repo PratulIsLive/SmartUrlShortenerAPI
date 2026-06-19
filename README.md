@@ -1,131 +1,68 @@
-# Smart URL Shortener API
+# Smart URL Shortener
 
-A URL Shortener API built using ASP.NET Core and PostgreSQL. This project allows users to create short URLs, generate QR codes, track visits, and manage their links securely using JWT authentication.
+This project started as a backend API built with ASP.NET Core and PostgreSQL and was later extended with a React frontend. Users can register, log in, create short URLs, generate QR codes, and track basic statistics from the dashboard.
+
+The project helped me understand JWT authentication, Entity Framework Core, PostgreSQL, middleware, and how a frontend communicates with a backend API.
 
 ## Features
 
-* JWT Authentication
-* Password Hashing with BCrypt
-* URL Shortening
-* Custom Short Codes
-* URL Expiration
-* Redirect to Original URL
-* QR Code Generation
-* QR Code Download
-* Dashboard Analytics
-* Visit Tracking
-* Pagination
-* Search and Sorting
-* Update and Delete URLs
-* Global Exception Handling Middleware
-* Request Logging Middleware
-* PostgreSQL Integration
-* Swagger Documentation
-* Docker Support
-* Deployment on Render with NeonDB
+- User registration and login
+- JWT authentication with BCrypt password hashing
+- Create short URLs with optional custom codes
+- Redirect short URLs to original links
+- QR code generation and download
+- Visit tracking and dashboard analytics
+- Search, sorting, and pagination
+- Update and delete URLs
+- Global exception handling and request logging
+- Swagger documentation
+- Docker support
+- Deployment using Render and NeonDB
 
 ## Tech Stack
 
-* ASP.NET Core (.NET 10)
-* Entity Framework Core
-* PostgreSQL
-* JWT Authentication
-* BCrypt
-* QRCoder
-* Swagger
-* Docker
-* Render
-* NeonDB
+### Backend
+- ASP.NET Core
+- Entity Framework Core
+- PostgreSQL
+- JWT
+- BCrypt
+- QRCoder
 
-## Main Components
+### Frontend
+- React
+- Vite
+- Axios
 
-**Controllers**
-
-* AuthController
-* UrlController
-* RedirectController
-
-**Services**
-
-* JwtService
-* UserService
-* UrlStorageService
-* ShortCodeGeneratorService
-* QrCodeService
-
-**Other Folders**
-
-* Models
-* DTOs
-* Data
-* Middleware
-* Migrations
+### Deployment
+- Render
+- NeonDB
+- Docker
 
 ## API Endpoints
 
 ### Authentication
-
-* POST `/api/auth/register`
-* POST `/api/auth/login`
+- POST `/api/auth/register`
+- POST `/api/auth/login`
 
 ### URL Management
-
-* POST `/api/url/shorten`
-* GET `/api/url/all`
-* GET `/api/url/dashboard`
-* GET `/api/url/stats/{shortCode}`
-* PUT `/api/url/{shortCode}`
-* DELETE `/api/url/{shortCode}`
+- POST `/api/url/shorten`
+- GET `/api/url/all`
+- GET `/api/url/dashboard`
+- GET `/api/url/stats/{shortCode}`
+- PUT `/api/url/{shortCode}`
+- DELETE `/api/url/{shortCode}`
 
 ### QR Code
-
-* GET `/api/url/qrcode/{shortCode}`
-* GET `/api/url/qrcode/{shortCode}/download`
+- GET `/api/url/qrcode/{shortCode}`
+- GET `/api/url/qrcode/{shortCode}/download`
 
 ### Redirect
-
-* GET `/{shortCode}`
-
-## How It Works
-
-* Controllers receive requests from clients.
-* Services contain the business logic.
-* Entity Framework Core communicates with PostgreSQL.
-* NeonDB stores all data.
-* Render hosts the application in the cloud.
+- GET `/{shortCode}`
 
 ## Running the Project
 
-Clone the repository:
-
-```bash
-git clone <repository-url>
-```
-
-Restore packages:
-
 ```bash
 dotnet restore
-```
-
-Apply migrations:
-
-```bash
 dotnet ef database update
-```
-
-Run the application:
-
-```bash
 dotnet run
-```
-
-Open Swagger:
-
-```text
-http://localhost:5004/swagger
-```
-
-## Author
-
-Pratul Kumar
