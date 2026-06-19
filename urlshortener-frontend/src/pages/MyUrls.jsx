@@ -53,6 +53,16 @@ function MyUrls() {
     }
   }
 
+  function copyUrl(shortCode) {
+
+    const shortUrl =
+      `https://smarturlshortenerapi.onrender.com/${shortCode}`;
+
+    navigator.clipboard.writeText(shortUrl);
+
+    alert("Short URL copied");
+  }
+
   return (
 
     <div>
@@ -95,6 +105,16 @@ function MyUrls() {
               }
             >
               Delete
+            </button>
+
+            {" "}
+
+            <button
+              onClick={() =>
+                copyUrl(url.shortCode)
+              }
+            >
+              Copy
             </button>
 
           </div>
